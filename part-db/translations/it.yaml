@@ -25,10 +25,10 @@ configuration:
     description: Esegue automaticamente le migrazioni del database all'avvio (viene prima creato un backup).
   trusted_proxies:
     name: Proxy attendibili
-    description: Intervalli di IP dei proxy separati da virgola. Mantieni l'intervallo di Home Assistant se usi un reverse proxy per l'add-on.
+    description: Intervalli di IP dei proxy separati da virgola. Mantieni l'intervallo di Home Assistant se usi un reverse proxy per l'app.
   database_url:
     name: URL database esterno (opzionale)
     description: >-
       Lascia vuoto per usare il database SQLite integrato (persistente sul volume
-      dati dell'add-on). Per usare MySQL/MariaDB o PostgreSQL, fornisci un DSN
-      Doctrine, es. mysql://user:pass@host:3306/partdb?serverVersion=10.11.2-MariaDB
+      dati dell'app). Per usare MySQL/MariaDB o PostgreSQL, fornisci un DSN
+      Doctrine (Connection String), es. mysql://user:pass@host:3306/partdb?serverVersion=10.11.2-MariaDB

@@ -25,10 +25,10 @@ configuration:
     description: Run database migrations automatically on start (a backup is taken first).
   trusted_proxies:
     name: Trusted proxies
-    description: Comma-separated proxy IP ranges. Keep the Home Assistant range if you reverse-proxy the add-on.
+    description: Comma-separated proxy IP ranges. Keep the Home Assistant range if you reverse-proxy the app.
   database_url:
     name: External database URL (optional)
     description: >-
-      Leave empty to use the built-in SQLite database (persisted on the add-on
-      data volume). To use MySQL/MariaDB or PostgreSQL, provide a Doctrine DSN,
+      Leave empty to use the built-in SQLite database (persisted on the app
+      data volume). To use MySQL/MariaDB or PostgreSQL, provide a Doctrine DSN (Connection String),
       e.g. mysql://user:pass@host:3306/partdb?serverVersion=10.11.2-MariaDB

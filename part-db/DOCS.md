@@ -1,4 +1,4 @@
-# Part-DB add-on
+# Part-DB app
 
 Runs [Part-DB](https://github.com/Part-DB/Part-DB-server), an open source
 inventory management system for electronic components, from the official
@@ -6,15 +6,16 @@ inventory management system for electronic components, from the official
 
 ## Installation
 
-1. In Home Assistant go to **Settings -> Add-ons -> Add-on Store**.
-2. Open the three-dot menu, choose **Repositories**, and add the URL of this
-   repository (the folder that contains `repository.yaml`).
-3. Install the **Part-DB** add-on.
-4. Review the options below, then **Start** the add-on.
-5. Open the Web UI (port `8085` by default).
+1. In Home Assistant go to **Settings -> Apps -> Install Apps**.
+2. Open the three-dot menu, choose **Repositories**, and add:
+   `https://github.com/argaar/ha-part-db-app`
+3. Go back to the **Store** and install the **Part-DB** app (scroll down if
+   you can't find it).
+4. Review the options below, then **Start** the app.
+5. Open the Web UI (host port `8085` by default).
 
 On first start Part-DB creates the database and an administrator account. Watch
-the add-on log: the initial admin password is printed there the first time the
+the app log: the initial admin password is printed there the first time the
 database is initialized. Log in with user `admin` and that password, then
 change it.
 
@@ -35,18 +36,18 @@ change it.
 
 ## Data persistence
 
-The add-on stores all mutable data on its persistent data volume:
+The app stores all mutable data on its persistent data volume:
 
 - `uploads/` -> `/data/uploads` (attachments and, by default, the SQLite
   database `app.db`).
 - `public/media/` -> `/data/media` (generated thumbnails and public media).
 
-Upstream ships these two paths as Docker volumes, so the add-on bind-mounts the
-persistent `/data` directories over them at start. This requires the add-on to
+Upstream ships these two paths as Docker volumes, so the app bind-mounts the
+persistent `/data` directories over them at start. This requires the app to
 run with the `SYS_ADMIN` capability and with AppArmor disabled (set in
 `config.yaml`); both are needed only to perform the bind mount.
 
-These survive add-on restarts and updates. Back up the add-on to preserve them.
+These survive app restarts and updates. Back up the app to preserve them.
 
 ## Using an external database
 
@@ -62,13 +63,13 @@ With `db_automigrate` enabled the schema is created and upgraded automatically.
 
 ## Updating Part-DB
 
-This add-on pins a specific upstream version. To move to a newer Part-DB
+This app pins a specific upstream version. To move to a newer Part-DB
 release, edit `build.yaml` (the `partdborg/part-db:vX.Y.Z` tags) and the
-`version` in `config.yaml`, then rebuild the add-on.
+`version` in `config.yaml`, then rebuild the app.
 
 ## Notes and limitations
 
 - No Home Assistant Ingress. Part-DB (Symfony) does not run reliably under an
   Ingress sub-path, so the UI is exposed on a mapped TCP port instead.
-- The add-on runs the container as the image ships it (Apache on port 80,
+- The app runs the container as the image ships it (Apache on port 80,
   mapped to host `8085`).
