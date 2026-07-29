@@ -82,6 +82,17 @@ export APP_SECRET="$(cat "$SECRET_FILE")"
 # to localhost, which is unreachable from the Home Assistant host.
 export SERVER_NAME=:80
 
+# Home Assistant Ingress support. HA embeds the UI in an iframe and proxies it
+# under a random base path, passing that path in the X-Ingress-Path header.
+#   1. Copy X-Ingress-Path into X-Forwarded-Prefix so Symfony (which trusts that
+#      header from TRUSTED_PROXIES, and the HA range is covered by the default)
+#      generates all URLs/assets under the Ingress base path. Empty for direct
+#      port access, so normal root serving is unaffected.
+#   2. Strip Part-DB's X-Frame-Options: SAMEORIGIN, which would otherwise block
+#      the Ingress iframe. HA fronts authentication for Ingress traffic.
+export CADDY_SERVER_EXTRA_DIRECTIVES='request_header X-Forwarded-Prefix {http.request.header.X-Ingress-Path}
+header -X-Frame-Options'
+
 log "Starting Part-DB (lang=${DEFAULT_LANG:-} tz=${DEFAULT_TIMEZONE:-} currency=${BASE_CURRENCY:-} db=${DATABASE_URL:-sqlite})"
 
 # Hand over to Part-DB's own FrankenPHP entrypoint (installs deps, runs
