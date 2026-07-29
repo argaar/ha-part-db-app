@@ -31,6 +31,7 @@ change it.
 | `max_attachment_file_size` | `100M` | Attachment upload limit. |
 | `db_automigrate` | `true` | Run DB migrations on start (backup taken first). |
 | `trusted_proxies` | `172.30.32.0/23,127.0.0.0/8,::1` | Trusted reverse-proxy ranges. |
+| `trusted_hosts` | (empty) | Optional unquoted regex of allowed host names, e.g. `^(192\.168\.1\.253)$`. Empty = accept any host. |
 | `database_url` | (empty) | Optional external DB DSN. Empty = built-in SQLite. |
 
 ## Data persistence
@@ -42,7 +43,9 @@ The app stores all mutable data on its persistent data volume:
 - `public/media/` -> `/data/media` (generated thumbnails and public media).
 
 The app symlinks Part-DB's `/app/uploads` and `/app/public/media` directories
-to these persistent locations on start.
+to these persistent locations on start. A unique random `APP_SECRET` is also
+generated on first start and stored at `/data/app_secret`, replacing the
+insecure default shipped with the image.
 
 These survive app restarts and updates. Back up the app to preserve them.
 

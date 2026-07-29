@@ -23,6 +23,13 @@ configuration:
   trusted_proxies:
     name: Proxy attendibili
     description: Intervalli di IP dei proxy separati da virgola. Mantieni l'intervallo di Home Assistant se usi un reverse proxy per l'app.
+  trusted_hosts:
+    name: Host attendibili (opzionale)
+    description: >-
+      Espressione regolare dei nomi host con cui Part-DB puo' essere raggiunto.
+      Inseriscila senza virgolette, es. ^(192\.168\.1\.253|homeassistant\.local)$ .
+      Lascia vuoto per accettare qualsiasi host (in tal caso l'interfaccia mostra
+      un avviso).
   database_url:
     name: URL database esterno (opzionale)
     description: >-

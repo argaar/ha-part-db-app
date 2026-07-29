@@ -52,6 +52,7 @@ setenv BASE_CURRENCY              "$(get base_currency)"
 setenv INSTANCE_NAME             "$(get instance_name)"
 setenv MAX_ATTACHMENT_FILE_SIZE "$(get max_attachment_file_size)"
 setenv TRUSTED_PROXIES          "$(get trusted_proxies)"
+setenv TRUSTED_HOSTS            "$(get trusted_hosts)"
 export ALLOW_ATTACHMENT_DOWNLOADS="$(getbool01 allow_attachment_downloads)"
 # Update check is not exposed as an option; always disable it.
 export CHECK_FOR_UPDATES=0
@@ -62,6 +63,19 @@ export CHECK_FOR_UPDATES=0
 # Optional external database. When empty, keep the image default
 # (SQLite at uploads/app.db, which is persisted via /data/uploads).
 setenv DATABASE_URL "$(get database_url)"
+
+# APP_SECRET: Symfony uses it for CSRF tokens, signed URLs and remember-me
+# cookies. The image ships a well-known default, so generate a unique value on
+# first start and persist it on /data. Keeping it stable across restarts and
+# updates avoids invalidating sessions and signed URLs; a per-build value (e.g.
+# generated in the Dockerfile) would change on every add-on update.
+SECRET_FILE=/data/app_secret
+if [ ! -s "$SECRET_FILE" ]; then
+  head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' > "$SECRET_FILE"
+  chmod 600 "$SECRET_FILE"
+  log "Generated a new APP_SECRET (stored at ${SECRET_FILE})"
+fi
+export APP_SECRET="$(cat "$SECRET_FILE")"
 
 # Make Caddy serve plain HTTP on port 80 (mapped to the host by config.yaml).
 # The image default SERVER_NAME=localhost would enable auto-HTTPS and bind only

@@ -23,6 +23,12 @@ configuration:
   trusted_proxies:
     name: Trusted proxies
     description: Comma-separated proxy IP ranges. Keep the Home Assistant range if you reverse-proxy the app.
+  trusted_hosts:
+    name: Trusted hosts (optional)
+    description: >-
+      Regular expression of host names Part-DB may be reached under. Enter it
+      unquoted, e.g. ^(192\.168\.1\.253|homeassistant\.local)$ . Leave empty to
+      accept any host (a warning is shown in the UI in that case).
   database_url:
     name: External database URL (optional)
     description: >-
