@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.14.0_3
+
+- Make direct host-port access optional and unmapped by default; Ingress is now the default access path. Map a host port under Network to reach Part-DB outside Home Assistant. Removed the `webui`/`watchdog` port references (Ingress provides the Open Web UI button).
+
 ## 2.14.0_2
 
 - Add Home Assistant Ingress support (sidebar panel) while keeping direct access on host port `8085`. Caddy maps HA's `X-Ingress-Path` to `X-Forwarded-Prefix` for correct sub-path URLs and strips `X-Frame-Options` so the app can be embedded in the HA UI.

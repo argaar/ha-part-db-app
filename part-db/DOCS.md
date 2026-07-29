@@ -13,8 +13,9 @@ inventory management system for electronic components, from the official
    you can't find it).
 4. Review the options below, then **Start** the app.
 5. Open the UI from the **Open Web UI** button or the Part-DB entry in the
-   Home Assistant sidebar (Ingress). It is also reachable directly on host
-   port `8085` by default.
+   Home Assistant sidebar (Ingress). Direct access on a host port is optional
+   and off by default; map one under the app's **Network** settings if you
+   want to reach Part-DB outside Home Assistant.
 
 On first start Part-DB creates the database and an administrator account. Watch
 the app log: the initial admin password is printed there the first time the
@@ -71,8 +72,9 @@ release, edit `build.yaml` (the `partdborg/part-db:vX.Y.Z` tags) and the
 
 ## Notes and limitations
 
-- Home Assistant Ingress is supported: the UI is available from the sidebar
-  panel, and also directly on host port `8085`. For Ingress to work, keep the
+- Home Assistant Ingress is the default access path: the UI is available from
+  the sidebar panel. Direct access on a host port is optional and disabled by
+  default (map one under **Network** if wanted). For Ingress to work, keep the
   Home Assistant range in `trusted_proxies` (the default already includes it);
   the app's `X-Frame-Options` header is stripped so it can be embedded in the
   Home Assistant UI.

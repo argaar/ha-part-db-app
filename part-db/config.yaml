@@ -1,5 +1,5 @@
 name: Part-DB
-version: 2.14.0_2
+version: 2.14.0_3
 slug: part_db
 description: Part-DB electronic parts inventory, running the official partdborg/part-db image (https://github.com/Part-DB/Part-DB-server)
 url: https://github.com/argaar/ha-part-db-app
@@ -13,11 +13,9 @@ boot: auto
 host_network: false
 hassio_api: false
 ports:
-  80/tcp: 8085
+  80/tcp: null
 ports_description:
-  80/tcp: Web UI
-webui: http://[HOST]:[PORT:80]/
-watchdog: tcp://[HOST]:[PORT:80]
+  80/tcp: Optional direct access. Leave empty to use Ingress only, or set a host port.
 ingress: true
 ingress_port: 80
 panel_title: Part-DB
