@@ -39,9 +39,8 @@ change it.
 
 ## Data persistence
 
-The app stores all mutable data in its `addon_config` folder, which Home
-Assistant keeps on the host at `/addon_configs/<slug>` (mounted as `/config`
-inside the container):
+The app stores all mutable data in its `app_config` folder, which Home
+Assistant keeps and exposes to you (mounted as `/config` inside the container):
 
 - `uploads/` (attachments and, by default, the SQLite database `app.db`)
 - `media/` (generated thumbnails and public media)
@@ -51,18 +50,15 @@ inside the container):
 The app symlinks Part-DB's `/app/uploads` and `/app/public/media` directories
 to these locations on start.
 
-**Why `addon_config` and not `/data`.** Home Assistant *always* deletes an
-add-on's `/data` volume on uninstall - there is no option to keep it. The
-`addon_config` folder is different: it is preserved on uninstall unless you tick
+**Why `app_config` and not `/data`.** Home Assistant *always* deletes an
+app's `/data` volume on uninstall - there is no option to keep it. The
+`app_config` folder is different: it is preserved on uninstall unless you tick
 **"Also remove app data"** in the uninstall dialog. Storing data here means an
 uninstall/reinstall keeps your database, uploads, media, and `APP_SECRET`.
 
 - Uninstall with the box **unchecked** -> data kept, reinstalling the same app
   (same repository, so same slug) picks it back up automatically.
 - Uninstall with the box **checked** -> clean slate (empty DB, new `APP_SECRET`).
-
-Upgrading from an older version (which used `/data`) migrates your existing
-data to `/config` automatically on first start.
 
 Preserved data is tied to the app's slug. Reinstalling from a different source
 (for example a local copy instead of the repository) gets a fresh folder. For a

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # Home Assistant add-on launcher for the official Part-DB image.
 # Reads /data/options.json, exports Part-DB env vars, persists data to /config
-# (the addon_config mount), then execs the upstream entrypoint.
+# (the app_config mount), then execs the upstream entrypoint.
 #
-# Persistent data lives under /config (host /addon_configs/<slug>) and NOT under
-# /data: Home Assistant always deletes an add-on's /data on uninstall, but the
-# addon_config folder is preserved unless the user ticks "Also remove app data".
+# Persistent data lives under /config (the app_config folder) and NOT under
+# /data: Home Assistant always deletes an app's /data on uninstall, but the
+# app_config folder is preserved unless the user ticks "Also remove app data".
 set -euo pipefail
 
 OPTIONS=/data/options.json
@@ -44,17 +44,6 @@ persist() {
   fi
   ln -sfn "$target" "$link"
 }
-
-# One-time migration: earlier versions persisted to /data, which Home Assistant
-# wipes on uninstall. Move any existing data to /config the first time this
-# version runs, before the symlinks are (re)created.
-if [ ! -e "$DATA/uploads/app.db" ] && [ -e /data/uploads/app.db ]; then
-  log "Migrating existing data from /data to ${DATA}"
-  mkdir -p "$DATA/uploads" "$DATA/media"
-  cp -a /data/uploads/. "$DATA/uploads/"
-  [ -d /data/media ] && cp -a /data/media/. "$DATA/media/" 2>/dev/null || true
-  [ -f /data/app_secret ] && cp -a /data/app_secret "$DATA/app_secret"
-fi
 
 # uploads/ holds attachments and (by default) the SQLite database (app.db).
 persist "$DATA/uploads" /app/uploads
@@ -99,7 +88,7 @@ export APP_SECRET="$(cat "$SECRET_FILE")"
 export SERVER_NAME=:80
 
 # The image sets XDG_CONFIG_HOME=/config, which is now the persistent
-# addon_config mount. Redirect Caddy's own config state to the ephemeral /data
+# app_config mount. Redirect Caddy's own config state to the ephemeral /data
 # volume so it does not clutter (or leak into) Part-DB's persistent data.
 export XDG_CONFIG_HOME=/data/caddy-config
 

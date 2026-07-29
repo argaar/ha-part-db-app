@@ -1,5 +1,5 @@
 # Wrap the official Part-DB image so it runs as a Home Assistant add-on.
-# The base image is published multi-arch (amd64/arm64/armv7) on Docker Hub.
+# The base image is published multi-arch (amd64/arm64) on Docker Hub.
 ARG BUILD_FROM=partdborg/part-db:v2.14.0
 FROM ${BUILD_FROM}
 

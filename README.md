@@ -4,7 +4,7 @@ Home Assistant app that runs [Part-DB](https://github.com/Part-DB/Part-DB-server
 an open source inventory system for electronic components, from the official
 [`partdborg/part-db`](https://hub.docker.com/r/partdborg/part-db) Docker image.
 
-Currently tracks Part-DB **v2.14.0** (multi-arch: amd64 / aarch64 / armv7).
+Currently tracks Part-DB **v2.14.0** (multi-arch: amd64 / aarch64).
 
 This repository is a thin wrapper. A small `Dockerfile` builds on top of the
 published image, and `run.sh` maps the app options to Part-DB environment

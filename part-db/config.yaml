@@ -1,19 +1,18 @@
 name: Part-DB
-version: 2.14.0_5
+version: 2.14.0_6
 slug: part_db
 description: Part-DB electronic parts inventory, running the official partdborg/part-db image (https://github.com/Part-DB/Part-DB-server)
 url: https://github.com/argaar/ha-part-db-app
 arch:
   - amd64
   - aarch64
-  - armv7
 init: false
 startup: application
 boot: auto
 host_network: false
 hassio_api: false
 map:
-  - addon_config:rw
+  - app_config:rw
 ports:
   80/tcp: null
 ports_description:

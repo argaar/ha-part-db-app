@@ -1,12 +1,17 @@
 # Changelog
 
+## 2.14.0_6
+
+- Rename the persistence map from the deprecated `addon_config` to `app_config` (silences a Supervisor deprecation warning).
+- Drop the deprecated `armv7` architecture; the app now targets `amd64` and `aarch64`.
+
 ## 2.14.0_5
 
 - Override `STOPSIGNAL` to `SIGTERM` so the app stops gracefully. The upstream image inherits `STOPSIGNAL SIGWINCH` (an Apache leftover) which FrankenPHP ignores, causing stop to time out and Docker to SIGKILL the container (exit code 137).
 
 ## 2.14.0_4
 
-- Persist data in the `addon_config` folder (`/config`, host `/addon_configs/<slug>`) instead of `/data`, so the database, uploads, media, and `APP_SECRET` survive an uninstall/reinstall (Home Assistant always wipes `/data` on uninstall, but keeps `addon_config` unless "Also remove app data" is checked). Existing `/data` data is migrated automatically on first start.
+- Persist data in the `addon_config` folder (`/config`, host `/addon_configs/<slug>`) instead of `/data`, so the database, uploads, media, and `APP_SECRET` survive an uninstall/reinstall (Home Assistant always wipes `/data` on uninstall, but keeps `addon_config` unless "Also remove app data" is checked).
 
 ## 2.14.0_3
 

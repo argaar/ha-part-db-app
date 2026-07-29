@@ -1,7 +1,6 @@
 build_from:
   amd64: partdborg/part-db:v2.14.0
   aarch64: partdborg/part-db:v2.14.0
-  armv7: partdborg/part-db:v2.14.0
 labels:
   org.opencontainers.image.title: "Part-DB"
   org.opencontainers.image.description: "Part-DB for Home Assistant (wraps partdborg/part-db)"
