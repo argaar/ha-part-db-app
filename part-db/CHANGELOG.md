@@ -1,15 +1,15 @@
 # Changelog
 
-## 2.14.2
+## 2.14.0_2
 
 - Add Home Assistant Ingress support (sidebar panel) while keeping direct access on host port `8085`. Caddy maps HA's `X-Ingress-Path` to `X-Forwarded-Prefix` for correct sub-path URLs and strips `X-Frame-Options` so the app can be embedded in the HA UI.
 
-## 2.14.1
+## 2.14.0_1
 
 - Generate a unique random `APP_SECRET` on first start and persist it on `/data`, replacing the insecure default shipped with the image. Stays stable across restarts and updates.
 - Add optional `trusted_hosts` option (maps to `TRUSTED_HOSTS`) to restrict the host names Part-DB accepts. Empty by default.
 
-## 2.14.0
+## 2.14.0_0
 
 - Initial Home Assistant app wrapping the official `partdborg/part-db:v2.14.0` image (FrankenPHP variant).
 - Maps app options to Part-DB environment variables.
