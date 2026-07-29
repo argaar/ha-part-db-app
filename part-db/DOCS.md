@@ -39,18 +39,34 @@ change it.
 
 ## Data persistence
 
-The app stores all mutable data on its persistent data volume:
+The app stores all mutable data in its `addon_config` folder, which Home
+Assistant keeps on the host at `/addon_configs/<slug>` (mounted as `/config`
+inside the container):
 
-- `uploads/` -> `/data/uploads` (attachments and, by default, the SQLite
-  database `app.db`).
-- `public/media/` -> `/data/media` (generated thumbnails and public media).
+- `uploads/` (attachments and, by default, the SQLite database `app.db`)
+- `media/` (generated thumbnails and public media)
+- `app_secret` (a unique random `APP_SECRET` generated on first start,
+  replacing the insecure default shipped with the image)
 
 The app symlinks Part-DB's `/app/uploads` and `/app/public/media` directories
-to these persistent locations on start. A unique random `APP_SECRET` is also
-generated on first start and stored at `/data/app_secret`, replacing the
-insecure default shipped with the image.
+to these locations on start.
 
-These survive app restarts and updates. Back up the app to preserve them.
+**Why `addon_config` and not `/data`.** Home Assistant *always* deletes an
+add-on's `/data` volume on uninstall - there is no option to keep it. The
+`addon_config` folder is different: it is preserved on uninstall unless you tick
+**"Also remove app data"** in the uninstall dialog. Storing data here means an
+uninstall/reinstall keeps your database, uploads, media, and `APP_SECRET`.
+
+- Uninstall with the box **unchecked** -> data kept, reinstalling the same app
+  (same repository, so same slug) picks it back up automatically.
+- Uninstall with the box **checked** -> clean slate (empty DB, new `APP_SECRET`).
+
+Upgrading from an older version (which used `/data`) migrates your existing
+data to `/config` automatically on first start.
+
+Preserved data is tied to the app's slug. Reinstalling from a different source
+(for example a local copy instead of the repository) gets a fresh folder. For a
+portable copy, take a Home Assistant backup of the app and restore it.
 
 ## Using an external database
 

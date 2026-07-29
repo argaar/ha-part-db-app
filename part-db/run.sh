@@ -1,10 +1,15 @@
 #!/usr/bin/env bash
 # Home Assistant add-on launcher for the official Part-DB image.
-# Reads /data/options.json, exports Part-DB env vars, persists data to /data,
-# then execs the upstream entrypoint.
+# Reads /data/options.json, exports Part-DB env vars, persists data to /config
+# (the addon_config mount), then execs the upstream entrypoint.
+#
+# Persistent data lives under /config (host /addon_configs/<slug>) and NOT under
+# /data: Home Assistant always deletes an add-on's /data on uninstall, but the
+# addon_config folder is preserved unless the user ticks "Also remove app data".
 set -euo pipefail
 
 OPTIONS=/data/options.json
+DATA=/config
 
 log() { echo "[part-db] $*"; }
 
@@ -40,10 +45,21 @@ persist() {
   ln -sfn "$target" "$link"
 }
 
+# One-time migration: earlier versions persisted to /data, which Home Assistant
+# wipes on uninstall. Move any existing data to /config the first time this
+# version runs, before the symlinks are (re)created.
+if [ ! -e "$DATA/uploads/app.db" ] && [ -e /data/uploads/app.db ]; then
+  log "Migrating existing data from /data to ${DATA}"
+  mkdir -p "$DATA/uploads" "$DATA/media"
+  cp -a /data/uploads/. "$DATA/uploads/"
+  [ -d /data/media ] && cp -a /data/media/. "$DATA/media/" 2>/dev/null || true
+  [ -f /data/app_secret ] && cp -a /data/app_secret "$DATA/app_secret"
+fi
+
 # uploads/ holds attachments and (by default) the SQLite database (app.db).
-persist /data/uploads /app/uploads
+persist "$DATA/uploads" /app/uploads
 # public/media holds generated thumbnails and public media.
-persist /data/media   /app/public/media
+persist "$DATA/media"   /app/public/media
 
 # --- Map add-on options to Part-DB environment variables ---
 setenv DEFAULT_LANG                "$(get default_lang)"
@@ -61,15 +77,15 @@ export CHECK_FOR_UPDATES=0
 [ "$(getbool01 db_automigrate)" = "1" ] && export DB_AUTOMIGRATE=true
 
 # Optional external database. When empty, keep the image default
-# (SQLite at uploads/app.db, which is persisted via /data/uploads).
+# (SQLite at uploads/app.db, which is persisted via ${DATA}/uploads).
 setenv DATABASE_URL "$(get database_url)"
 
 # APP_SECRET: Symfony uses it for CSRF tokens, signed URLs and remember-me
 # cookies. The image ships a well-known default, so generate a unique value on
-# first start and persist it on /data. Keeping it stable across restarts and
+# first start and persist it on /config. Keeping it stable across restarts and
 # updates avoids invalidating sessions and signed URLs; a per-build value (e.g.
 # generated in the Dockerfile) would change on every add-on update.
-SECRET_FILE=/data/app_secret
+SECRET_FILE="$DATA/app_secret"
 if [ ! -s "$SECRET_FILE" ]; then
   head -c 32 /dev/urandom | od -An -tx1 | tr -d ' \n' > "$SECRET_FILE"
   chmod 600 "$SECRET_FILE"
@@ -81,6 +97,11 @@ export APP_SECRET="$(cat "$SECRET_FILE")"
 # The image default SERVER_NAME=localhost would enable auto-HTTPS and bind only
 # to localhost, which is unreachable from the Home Assistant host.
 export SERVER_NAME=:80
+
+# The image sets XDG_CONFIG_HOME=/config, which is now the persistent
+# addon_config mount. Redirect Caddy's own config state to the ephemeral /data
+# volume so it does not clutter (or leak into) Part-DB's persistent data.
+export XDG_CONFIG_HOME=/data/caddy-config
 
 # Home Assistant Ingress support. HA embeds the UI in an iframe and proxies it
 # under a random base path, passing that path in the X-Ingress-Path header.

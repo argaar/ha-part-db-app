@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.14.0_4
+
+- Persist data in the `addon_config` folder (`/config`, host `/addon_configs/<slug>`) instead of `/data`, so the database, uploads, media, and `APP_SECRET` survive an uninstall/reinstall (Home Assistant always wipes `/data` on uninstall, but keeps `addon_config` unless "Also remove app data" is checked). Existing `/data` data is migrated automatically on first start.
+
 ## 2.14.0_3
 
 - Make direct host-port access optional and unmapped by default; Ingress is now the default access path. Map a host port under Network to reach Part-DB outside Home Assistant. Removed the `webui`/`watchdog` port references (Ingress provides the Open Web UI button).
