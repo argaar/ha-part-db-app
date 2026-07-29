@@ -14,10 +14,10 @@ bump to new releases.
 
 ## Install
 
-1. In Home Assistant go to **Settings -> Apps -> Apps Store**.
+1. In Home Assistant go to **Settings -> Apps -> Install Apps**.
 2. Open the three-dot menu, choose **Repositories**, and add:
    `https://github.com/argaar/ha-part-db-app`
-3. Install the **Part-DB** app.
+3. Go back at the **Store** and install the **Part-DB** app (scroll down if you can't find it).
 4. Review the options, then **Start** it.
 5. Open the Web UI (host port `8085` by default).
 
