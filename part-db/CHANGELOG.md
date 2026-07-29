@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.14.0_5
+
+- Override `STOPSIGNAL` to `SIGTERM` so the app stops gracefully. The upstream image inherits `STOPSIGNAL SIGWINCH` (an Apache leftover) which FrankenPHP ignores, causing stop to time out and Docker to SIGKILL the container (exit code 137).
+
 ## 2.14.0_4
 
 - Persist data in the `addon_config` folder (`/config`, host `/addon_configs/<slug>`) instead of `/data`, so the database, uploads, media, and `APP_SECRET` survive an uninstall/reinstall (Home Assistant always wipes `/data` on uninstall, but keeps `addon_config` unless "Also remove app data" is checked). Existing `/data` data is migrated automatically on first start.

@@ -15,7 +15,13 @@ COPY run.sh /run.sh
 RUN chmod a+x /run.sh
 
 # Replace the upstream entrypoint with our launcher. run.sh maps the add-on
-# options to Part-DB environment variables, wires persistence to /data, then
+# options to Part-DB environment variables, wires persistence to /config, then
 # hands over to the upstream FrankenPHP entrypoint (docker-entrypoint) + the
 # frankenphp server.
 ENTRYPOINT ["/run.sh"]
+
+# The upstream image inherits STOPSIGNAL SIGWINCH (a leftover from the old
+# Apache variant). FrankenPHP/Caddy ignores SIGWINCH and shuts down on SIGTERM,
+# so without this override stopping the add-on times out and Docker SIGKILLs it
+# (exit code 137). SIGTERM lets it stop gracefully.
+STOPSIGNAL SIGTERM

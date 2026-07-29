@@ -1,5 +1,5 @@
 name: Part-DB
-version: 2.14.0_4
+version: 2.14.0_5
 slug: part_db
 description: Part-DB electronic parts inventory, running the official partdborg/part-db image (https://github.com/Part-DB/Part-DB-server)
 url: https://github.com/argaar/ha-part-db-app
