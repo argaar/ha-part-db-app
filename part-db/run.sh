@@ -60,7 +60,8 @@ setenv INSTANCE_NAME             "$(get instance_name)"
 setenv MAX_ATTACHMENT_FILE_SIZE "$(get max_attachment_file_size)"
 setenv TRUSTED_PROXIES          "$(get trusted_proxies)"
 export ALLOW_ATTACHMENT_DOWNLOADS="$(getbool01 allow_attachment_downloads)"
-export CHECK_FOR_UPDATES="$(getbool01 check_for_updates)"
+# Update check is not exposed as an option; always disable it.
+export CHECK_FOR_UPDATES=0
 
 # DB_AUTOMIGRATE must be the literal "true" to trigger the upstream migration.
 [ "$(getbool01 db_automigrate)" = "1" ] && export DB_AUTOMIGRATE=true
@@ -73,4 +74,4 @@ log "Starting Part-DB (lang=${DEFAULT_LANG:-} tz=${DEFAULT_TIMEZONE:-} currency=
 
 # Hand over to Part-DB's own entrypoint (chown + php-fpm + optional migrations)
 # and the apache foreground process it normally runs as CMD.
-exec partdb-entrypoint.sh /usr/local/bin/apache2-foreground
+exec /usr/local/bin/partdb-entrypoint.sh /usr/local/bin/apache2-foreground

@@ -14,9 +14,6 @@ configuration:
   allow_attachment_downloads:
     name: Allow attachment downloads
     description: Let Part-DB download attachment files from external URLs.
-  check_for_updates:
-    name: Check for updates
-    description: Allow Part-DB to check GitHub for newer releases.
   max_attachment_file_size:
     name: Max attachment file size
     description: Upload limit for attachments, e.g. 100M.

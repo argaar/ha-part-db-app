@@ -28,7 +28,6 @@ change it.
 | `base_currency` | `EUR` | Reference currency (ISO 4217). |
 | `instance_name` | `Part-DB` | Name shown in the UI. |
 | `allow_attachment_downloads` | `false` | Allow downloading attachments from URLs. |
-| `check_for_updates` | `false` | Check GitHub for newer releases. |
 | `max_attachment_file_size` | `100M` | Attachment upload limit. |
 | `db_automigrate` | `true` | Run DB migrations on start (backup taken first). |
 | `trusted_proxies` | `172.30.32.0/23,127.0.0.0/8,::1` | Trusted reverse-proxy ranges. |

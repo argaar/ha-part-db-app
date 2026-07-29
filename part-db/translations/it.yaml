@@ -14,9 +14,6 @@ configuration:
   allow_attachment_downloads:
     name: Consenti download degli allegati
     description: Permette a Part-DB di scaricare i file allegati da URL esterni.
-  check_for_updates:
-    name: Controlla aggiornamenti
-    description: Permette a Part-DB di controllare su GitHub la presenza di nuove versioni.
   max_attachment_file_size:
     name: Dimensione massima file allegato
     description: Limite di caricamento per gli allegati, es. 100M.
