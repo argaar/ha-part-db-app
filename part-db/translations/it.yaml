@@ -1,0 +1,34 @@
+configuration:
+  default_lang:
+    name: Lingua predefinita
+    description: Lingua predefinita dell'interfaccia per i nuovi utenti (es. en, de, it, fr).
+  default_timezone:
+    name: Fuso orario predefinito
+    description: Identificatore del fuso orario PHP, es. Europe/Rome o Europe/Berlin.
+  base_currency:
+    name: Valuta di base
+    description: Codice ISO 4217 usato come valuta di riferimento per i prezzi (es. EUR, USD).
+  instance_name:
+    name: Nome istanza
+    description: Nome mostrato nella barra di navigazione e nei titoli delle pagine.
+  allow_attachment_downloads:
+    name: Consenti download degli allegati
+    description: Permette a Part-DB di scaricare i file allegati da URL esterni.
+  check_for_updates:
+    name: Controlla aggiornamenti
+    description: Permette a Part-DB di controllare su GitHub la presenza di nuove versioni.
+  max_attachment_file_size:
+    name: Dimensione massima file allegato
+    description: Limite di caricamento per gli allegati, es. 100M.
+  db_automigrate:
+    name: Migrazione automatica del database
+    description: Esegue automaticamente le migrazioni del database all'avvio (viene prima creato un backup).
+  trusted_proxies:
+    name: Proxy attendibili
+    description: Intervalli di IP dei proxy separati da virgola. Mantieni l'intervallo di Home Assistant se usi un reverse proxy per l'add-on.
+  database_url:
+    name: URL database esterno (opzionale)
+    description: >-
+      Lascia vuoto per usare il database SQLite integrato (persistente sul volume
+      dati dell'add-on). Per usare MySQL/MariaDB o PostgreSQL, fornisci un DSN
+      Doctrine, es. mysql://user:pass@host:3306/partdb?serverVersion=10.11.2-MariaDB
