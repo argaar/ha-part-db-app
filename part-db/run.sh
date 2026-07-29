@@ -20,37 +20,30 @@ getbool01() {
 # image default with a blank string.
 setenv() { [ -n "${2:-}" ] && export "$1=$2" || true; }
 
-# Move a Part-DB data directory onto the persistent /data volume and bind it
-# back. Seeds the persistent copy from the image on first run.
+# Move a Part-DB data directory onto the persistent /data volume and symlink
+# it back. Seeds the persistent copy from the image on first run.
 #
-# Upstream declares uploads/ and public/media/ as Docker VOLUMEs (see the
-# upstream Dockerfile). At runtime those paths are anonymous mount points that
-# cannot be replaced with a symlink (rm -> "Device or resource busy"), and the
-# attachment directories are hardcoded relative paths in the image config, so
-# they cannot be relocated via env. We therefore bind-mount the persistent
-# /data directory over the volume, which requires SYS_ADMIN and apparmor: false
-# in config.yaml.
+# The FrankenPHP image runs Part-DB from /app, so the real data lives in
+# /app/uploads and /app/public/media (the /var/www/html/* VOLUMEs the image
+# still declares are vestigial and unused). These /app paths are plain
+# directories, so a symlink is enough and no bind mount / elevated privilege
+# is required.
 persist() {
   local target="$1" link="$2"
-  mkdir -p "$target" "$link"
-
-  # Already bound to the persistent copy (same device+inode)? Nothing to do.
-  if [ "$(stat -c '%d:%i' "$link" 2>/dev/null)" = "$(stat -c '%d:%i' "$target" 2>/dev/null)" ]; then
-    return
+  mkdir -p "$target"
+  if [ -d "$link" ] && [ ! -L "$link" ]; then
+    if [ -z "$(ls -A "$target" 2>/dev/null)" ] && [ -n "$(ls -A "$link" 2>/dev/null)" ]; then
+      cp -a "$link/." "$target/"
+    fi
+    rm -rf "$link"
   fi
-
-  # Seed the persistent copy from the image/volume contents on first run.
-  if [ -z "$(ls -A "$target" 2>/dev/null)" ] && [ -n "$(ls -A "$link" 2>/dev/null)" ]; then
-    cp -a "$link/." "$target/"
-  fi
-
-  mount --bind "$target" "$link"
+  ln -sfn "$target" "$link"
 }
 
 # uploads/ holds attachments and (by default) the SQLite database (app.db).
-persist /data/uploads /var/www/html/uploads
+persist /data/uploads /app/uploads
 # public/media holds generated thumbnails and public media.
-persist /data/media   /var/www/html/public/media
+persist /data/media   /app/public/media
 
 # --- Map add-on options to Part-DB environment variables ---
 setenv DEFAULT_LANG                "$(get default_lang)"
@@ -70,8 +63,14 @@ export CHECK_FOR_UPDATES=0
 # (SQLite at uploads/app.db, which is persisted via /data/uploads).
 setenv DATABASE_URL "$(get database_url)"
 
+# Make Caddy serve plain HTTP on port 80 (mapped to the host by config.yaml).
+# The image default SERVER_NAME=localhost would enable auto-HTTPS and bind only
+# to localhost, which is unreachable from the Home Assistant host.
+export SERVER_NAME=:80
+
 log "Starting Part-DB (lang=${DEFAULT_LANG:-} tz=${DEFAULT_TIMEZONE:-} currency=${BASE_CURRENCY:-} db=${DATABASE_URL:-sqlite})"
 
-# Hand over to Part-DB's own entrypoint (chown + php-fpm + optional migrations)
-# and the apache foreground process it normally runs as CMD.
-exec /usr/local/bin/partdb-entrypoint.sh /usr/local/bin/apache2-foreground
+# Hand over to Part-DB's own FrankenPHP entrypoint (installs deps, runs
+# migrations, fixes permissions) and the frankenphp server it runs as CMD.
+cd /app
+exec /usr/local/bin/docker-entrypoint frankenphp run --config /etc/caddy/Caddyfile

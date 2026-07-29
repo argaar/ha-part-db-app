@@ -41,10 +41,8 @@ The app stores all mutable data on its persistent data volume:
   database `app.db`).
 - `public/media/` -> `/data/media` (generated thumbnails and public media).
 
-Upstream ships these two paths as Docker volumes, so the app bind-mounts the
-persistent `/data` directories over them at start. This requires the app to
-run with the `SYS_ADMIN` capability and with AppArmor disabled (set in
-`config.yaml`); both are needed only to perform the bind mount.
+The app symlinks Part-DB's `/app/uploads` and `/app/public/media` directories
+to these persistent locations on start.
 
 These survive app restarts and updates. Back up the app to preserve them.
 
@@ -70,5 +68,5 @@ release, edit `build.yaml` (the `partdborg/part-db:vX.Y.Z` tags) and the
 
 - No Home Assistant Ingress. Part-DB (Symfony) does not run reliably under an
   Ingress sub-path, so the UI is exposed on a mapped TCP port instead.
-- The app runs the container as the image ships it (Apache on port 80,
-  mapped to host `8085`).
+- The app runs the container as the image ships it (FrankenPHP/Caddy serving
+  plain HTTP on port 80, mapped to host `8085`).

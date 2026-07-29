@@ -16,5 +16,6 @@ RUN chmod a+x /run.sh
 
 # Replace the upstream entrypoint with our launcher. run.sh maps the add-on
 # options to Part-DB environment variables, wires persistence to /data, then
-# hands over to the upstream entrypoint (partdb-entrypoint.sh) + apache.
+# hands over to the upstream FrankenPHP entrypoint (docker-entrypoint) + the
+# frankenphp server.
 ENTRYPOINT ["/run.sh"]
