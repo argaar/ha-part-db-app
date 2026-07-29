@@ -1,8 +1,8 @@
 name: Part-DB
 version: 2.14.0
 slug: part_db
-description: Part-DB electronic parts inventory, running the official partdborg/part-db image
-url: https://github.com/Part-DB/Part-DB-server
+description: Part-DB electronic parts inventory, running the official partdborg/part-db image (https://github.com/Part-DB/Part-DB-server)
+url: https://github.com/argaar/ha-part-db-app
 arch:
   - amd64
   - aarch64
@@ -12,6 +12,9 @@ startup: application
 boot: auto
 host_network: false
 hassio_api: false
+privileged:
+  - SYS_ADMIN
+apparmor: false
 ports:
   80/tcp: 8085
 ports_description:
@@ -24,7 +27,7 @@ options:
   base_currency: EUR
   instance_name: Part-DB
   allow_attachment_downloads: false
-  check_for_updates: true
+  check_for_updates: false
   max_attachment_file_size: 100M
   db_automigrate: true
   trusted_proxies: 172.30.32.0/23,127.0.0.0/8,::1

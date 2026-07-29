@@ -20,18 +20,31 @@ getbool01() {
 # image default with a blank string.
 setenv() { [ -n "${2:-}" ] && export "$1=$2" || true; }
 
-# Move a Part-DB data directory onto the persistent /data volume and symlink
-# it back. Seeds the persistent copy from the image on first run.
+# Move a Part-DB data directory onto the persistent /data volume and bind it
+# back. Seeds the persistent copy from the image on first run.
+#
+# Upstream declares uploads/ and public/media/ as Docker VOLUMEs (see the
+# upstream Dockerfile). At runtime those paths are anonymous mount points that
+# cannot be replaced with a symlink (rm -> "Device or resource busy"), and the
+# attachment directories are hardcoded relative paths in the image config, so
+# they cannot be relocated via env. We therefore bind-mount the persistent
+# /data directory over the volume, which requires SYS_ADMIN and apparmor: false
+# in config.yaml.
 persist() {
   local target="$1" link="$2"
-  mkdir -p "$target"
-  if [ -d "$link" ] && [ ! -L "$link" ]; then
-    if [ -z "$(ls -A "$target" 2>/dev/null)" ] && [ -n "$(ls -A "$link" 2>/dev/null)" ]; then
-      cp -a "$link/." "$target/"
-    fi
-    rm -rf "$link"
+  mkdir -p "$target" "$link"
+
+  # Already bound to the persistent copy (same device+inode)? Nothing to do.
+  if [ "$(stat -c '%d:%i' "$link" 2>/dev/null)" = "$(stat -c '%d:%i' "$target" 2>/dev/null)" ]; then
+    return
   fi
-  ln -sfn "$target" "$link"
+
+  # Seed the persistent copy from the image/volume contents on first run.
+  if [ -z "$(ls -A "$target" 2>/dev/null)" ] && [ -n "$(ls -A "$link" 2>/dev/null)" ]; then
+    cp -a "$link/." "$target/"
+  fi
+
+  mount --bind "$target" "$link"
 }
 
 # uploads/ holds attachments and (by default) the SQLite database (app.db).

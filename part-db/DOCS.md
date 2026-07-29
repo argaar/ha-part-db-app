@@ -27,7 +27,7 @@ change it.
 | `base_currency` | `EUR` | Reference currency (ISO 4217). |
 | `instance_name` | `Part-DB` | Name shown in the UI. |
 | `allow_attachment_downloads` | `false` | Allow downloading attachments from URLs. |
-| `check_for_updates` | `true` | Check GitHub for newer releases. |
+| `check_for_updates` | `false` | Check GitHub for newer releases. |
 | `max_attachment_file_size` | `100M` | Attachment upload limit. |
 | `db_automigrate` | `true` | Run DB migrations on start (backup taken first). |
 | `trusted_proxies` | `172.30.32.0/23,127.0.0.0/8,::1` | Trusted reverse-proxy ranges. |
@@ -40,6 +40,11 @@ The add-on stores all mutable data on its persistent data volume:
 - `uploads/` -> `/data/uploads` (attachments and, by default, the SQLite
   database `app.db`).
 - `public/media/` -> `/data/media` (generated thumbnails and public media).
+
+Upstream ships these two paths as Docker volumes, so the add-on bind-mounts the
+persistent `/data` directories over them at start. This requires the add-on to
+run with the `SYS_ADMIN` capability and with AppArmor disabled (set in
+`config.yaml`); both are needed only to perform the bind mount.
 
 These survive add-on restarts and updates. Back up the add-on to preserve them.
 
